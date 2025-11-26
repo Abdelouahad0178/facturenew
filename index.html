@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Facture NEW LACASSA</title>
 
+  <!-- Librairie pour générer le PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+          integrity="sha512-YcsIPQv0vM0v1QeYt6P+3ZsO9JQ3Yp1dpJ81uiYvwP6PswjL8Z61ELGS9gN44FQpR4qv/E4Z5xkS2dL9pK3Gxw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <style>
     /* ===============================
        RESET SIMPLE
@@ -62,8 +67,160 @@
     }
 
     /* ===============================
-       HEADER
+       PANEL DE SAISIE
     =============================== */
+    .config-panel {
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+    }
+
+    .config-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #6b7280;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .config-title::before {
+      content: "";
+      width: 18px;
+      height: 1px;
+      background: #cbd5f5;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px 16px;
+      margin-bottom: 8px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .field input {
+      padding: 5px 8px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .field input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-apply {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 999px;
+      border: none;
+      background: #111827;
+      color: #ffffff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .btn-apply span.icon {
+      font-size: 14px;
+    }
+
+    .btn-apply:hover {
+      filter: brightness(1.05);
+    }
+
+    /* ===============================
+       HEADER / ACTIONS
+    =============================== */
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-print,
+    .btn-whatsapp {
+      padding: 7px 14px;
+      font-size: 13px;
+      border-radius: 999px;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.35);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .btn-print {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-print:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.45);
+    }
+
+    .btn-print:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-whatsapp {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      box-shadow: 0 8px 18px rgba(22, 163, 74, 0.35);
+    }
+
+    .btn-whatsapp:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 12px 22px rgba(22, 163, 74, 0.45);
+    }
+
+    .btn-whatsapp:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 14px rgba(22, 163, 74, 0.3);
+    }
+
+    .actions .icon {
+      font-size: 15px;
+    }
+
     .invoice-header {
       display: flex;
       justify-content: space-between;
@@ -143,43 +300,6 @@
     .label {
       font-weight: 600;
       color: #4b5563;
-    }
-
-    /* Bouton imprimer */
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 12px;
-    }
-
-    .btn-print {
-      padding: 7px 14px;
-      font-size: 13px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #2563eb, #4f46e5);
-      color: #ffffff;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
-    }
-
-    .btn-print span.icon {
-      font-size: 15px;
-    }
-
-    .btn-print:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.05);
-      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.45);
-    }
-
-    .btn-print:active {
-      transform: translateY(0);
-      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
     }
 
     /* ===============================
@@ -482,6 +602,10 @@
       .totals-container {
         justify-content: flex-start;
       }
+
+      .form-grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
     }
 
     /* ===============================
@@ -513,6 +637,7 @@
       }
 
       .actions,
+      .config-panel,
       .stamp-input {
         display: none !important;
       }
@@ -525,138 +650,361 @@
     <div class="invoice-container">
       <div class="invoice-inner">
 
-        <!-- Bouton imprimer -->
+        <!-- Boutons actions -->
         <div class="actions">
-          <button class="btn-print" onclick="window.print()">
+          <button class="btn-print" onclick="onPrintClicked()">
             <span class="icon">🖨️</span>
-            <span>Imprimer la facture</span>
+            <span>Imprimer</span>
+          </button>
+
+          <button class="btn-whatsapp" onclick="sendWhatsApp()">
+            <span class="icon">💬</span>
+            <span>WhatsApp (PDF)</span>
           </button>
         </div>
 
-        <!-- EN-TÊTE -->
-        <header class="invoice-header">
-          <div class="company-info">
-            <div class="company-name">NEW LACASSA SARL A. U.</div>
-            <div class="company-badge">Entreprise de construction</div>
-            <p class="company-activity">
-              Activité de construction, location de matériaux de construction.
-            </p>
-          </div>
+        <!-- PANEL DE SAISIE DYNAMIQUE -->
+        <div class="config-panel">
+          <div class="config-title">Paramètres de la facture</div>
 
-          <div class="invoice-meta">
-            <div class="invoice-meta-title">Facture</div>
-            <div class="invoice-meta-tag">
-              <span>Original</span>
+          <div class="form-grid">
+            <div class="field">
+              <label for="input-numero">N° facture</label>
+              <input type="text" id="input-numero" value="01/25" />
             </div>
-            <div class="invoice-meta-line">
-              <span class="label">N° facture :</span> 01/25
+
+            <div class="field">
+              <label for="input-date">Date</label>
+              <input type="date" id="input-date" />
             </div>
-            <div class="invoice-meta-line">
-              <span class="label">Date :</span> <span id="invoice-date"></span>
+
+            <div class="field">
+              <label for="input-tva">TVA (%)</label>
+              <input type="number" id="input-tva" value="20" step="0.01" />
+            </div>
+
+            <div class="field full">
+              <label for="input-client">Nom du client</label>
+              <input type="text" id="input-client" value="STRONGER IMMO SARL A.U." />
+            </div>
+
+            <div class="field full">
+              <label for="input-designation">Désignation</label>
+              <input type="text" id="input-designation" value="CREUSE DE LA CAVE 60M3 et décharge" />
+            </div>
+
+            <div class="field">
+              <label for="input-montant">Montant TTC (DHS)</label>
+              <input type="number" id="input-montant" value="150000" step="0.01" />
+            </div>
+
+            <div class="field">
+              <label for="input-whatsapp">N° WhatsApp (optionnel)</label>
+              <input type="tel" id="input-whatsapp" placeholder="Ex: 2126XXXXXXXX" />
             </div>
           </div>
-        </header>
 
-        <!-- CLIENT -->
-        <section class="invoice-section">
-          <div class="section-title">Client</div>
-          <div class="client-info">
-            <p><span class="label">Nom du client :</span> STRONGER IMMO SARL A.U.</p>
-          </div>
-        </section>
+          <button class="btn-apply" onclick="applyInvoiceFromForm()">
+            <span class="icon">✅</span>
+            <span>Appliquer à la facture</span>
+          </button>
+        </div>
 
-        <!-- DÉTAILS FACTURE -->
-        <section class="invoice-section">
-          <div class="section-title">Détails de la facture</div>
+        <!-- CONTENU FACTURE (utilisé aussi pour le PDF) -->
+        <div id="invoice-content">
 
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th class="col-designation">Désignation</th>
-                  <th class="col-amount">Montant TTC (DHS)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>CREUSE DE LA CAVE 60M3 et décharge</td>
-                  <td class="amount">150&nbsp;000,00</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <!-- EN-TÊTE -->
+          <header class="invoice-header">
+            <div class="company-info">
+              <div class="company-name">NEW LACASSA SARL A. U.</div>
+              <div class="company-badge">Entreprise de construction</div>
+              <p class="company-activity">
+                Activité de construction, location de matériaux de construction.
+              </p>
+            </div>
 
-          <!-- Totaux -->
-          <div class="totals-container">
-            <table class="totals-table">
-              <tbody>
-                <tr>
-                  <td class="label">Montant HT</td>
-                  <td class="amount">125&nbsp;000,00 DHS</td>
-                </tr>
-                <tr>
-                  <td class="label">TVA 20&nbsp;%</td>
-                  <td class="amount">25&nbsp;000,00 DHS</td>
-                </tr>
-                <tr class="total-row">
-                  <td class="label">Montant TTC</td>
-                  <td class="amount">150&nbsp;000,00 DHS</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- MONTANT EN LETTRES -->
-        <section class="amount-in-words">
-          <strong>
-            Arrêtée la présente facture à la somme de cent cinquante mille (150&nbsp;000) dirhams TTC.
-          </strong>
-        </section>
-
-        <!-- SIGNATURE / CACHET -->
-        <section class="signature-block">
-          <div class="signature-text">
-            <div class="signature-title">Signé &amp; cachet</div>
-            <p>Pour NEW LACASSA SARL A. U.</p>
-            <p style="margin-bottom: 8px; font-size: 12px; color: #6b7280;">Le représentant légal</p>
-
-            <div class="stamp-preview" id="stamp-preview">
-              <div class="stamp-placeholder">
-                Cachet non importé
+            <div class="invoice-meta">
+              <div class="invoice-meta-title">Facture</div>
+              <div class="invoice-meta-tag">
+                <span>Original</span>
+              </div>
+              <div class="invoice-meta-line">
+                <span class="label">N° facture :</span>
+                <span id="span-numero">01/25</span>
+              </div>
+              <div class="invoice-meta-line">
+                <span class="label">Date :</span>
+                <span id="span-date"></span>
               </div>
             </div>
+          </header>
 
-            <div class="stamp-input">
-              <label for="stamp-input">Importer le cachet (image) :</label><br />
-              <input type="file" id="stamp-input" accept="image/*" />
+          <!-- CLIENT -->
+          <section class="invoice-section">
+            <div class="section-title">Client</div>
+            <div class="client-info">
+              <p>
+                <span class="label">Nom du client :</span>
+                <span id="span-client">STRONGER IMMO SARL A.U.</span>
+              </p>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <!-- PIED DE PAGE -->
-        <footer class="footer">
-          <div class="footer-row">
-            <p><strong>Adresse :</strong> LOT ELWAKALA 01 BLOC F S/N LAAYOUNE.</p>
-          </div>
-          <div class="footer-row">
-            <p><strong>RC :</strong> 53543</p>
-            <p><strong>IF :</strong> 66276689</p>
-            <p><strong>N° CSS :</strong> 6070305</p>
-            <p><strong>ICE :</strong> 003712919000008</p>
-          </div>
-        </footer>
+          <!-- DÉTAILS FACTURE -->
+          <section class="invoice-section">
+            <div class="section-title">Détails de la facture</div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="col-designation">Désignation</th>
+                    <th class="col-amount">Montant TTC (DHS)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td id="cell-designation">CREUSE DE LA CAVE 60M3 et décharge</td>
+                    <td class="amount" id="cell-ttc-ligne">150&nbsp;000,00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Totaux -->
+            <div class="totals-container">
+              <table class="totals-table">
+                <tbody>
+                  <tr>
+                    <td class="label">Montant HT</td>
+                    <td class="amount" id="cell-ht">125&nbsp;000,00 DHS</td>
+                  </tr>
+                  <tr>
+                    <td class="label">TVA <span id="span-tva-rate">20</span>&nbsp;%</td>
+                    <td class="amount" id="cell-tva">25&nbsp;000,00 DHS</td>
+                  </tr>
+                  <tr class="total-row">
+                    <td class="label">Montant TTC</td>
+                    <td class="amount" id="cell-ttc-total">150&nbsp;000,00 DHS</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- MONTANT EN LETTRES -->
+          <section class="amount-in-words">
+            <strong>
+              Arrêtée la présente facture à la somme de
+              <span id="amount-words-text">Cent cinquante mille</span>
+              (<span id="amount-words-number">150&nbsp;000</span>)
+              dirhams TTC.
+            </strong>
+          </section>
+
+          <!-- SIGNATURE / CACHET -->
+          <section class="signature-block">
+            <div class="signature-text">
+              <div class="signature-title">Signé &amp; cachet</div>
+              <p>Pour NEW LACASSA SARL A. U.</p>
+              <p style="margin-bottom: 8px; font-size: 12px; color: #6b7280;">Le représentant légal</p>
+
+              <div class="stamp-preview" id="stamp-preview">
+                <div class="stamp-placeholder">
+                  Cachet non importé
+                </div>
+              </div>
+
+              <div class="stamp-input">
+                <label for="stamp-input">Importer le cachet (image) :</label><br />
+                <input type="file" id="stamp-input" accept="image/*" />
+              </div>
+            </div>
+          </section>
+
+          <!-- PIED DE PAGE -->
+          <footer class="footer">
+            <div class="footer-row">
+              <p><strong>Adresse :</strong> LOT ELWAKALA 01 BLOC F S/N LAAYOUNE.</p>
+            </div>
+            <div class="footer-row">
+              <p><strong>RC :</strong> 53543</p>
+              <p><strong>IF :</strong> 66276689</p>
+              <p><strong>N° CSS :</strong> 6070305</p>
+              <p><strong>ICE :</strong> 003712919000008</p>
+            </div>
+          </footer>
+
+        </div><!-- /#invoice-content -->
 
       </div>
     </div>
   </div>
 
   <script>
-    // Date du jour en français
-    (function setInvoiceDate() {
-      const dateSpan = document.getElementById("invoice-date");
+    const moneyFormatter = new Intl.NumberFormat("fr-FR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    function toNum(v) {
+      const s = String(v ?? "")
+        .replace(/\s/g, "")
+        .replace(",", ".");
+      const n = Number(s);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    // === Conversion nombre -> lettres (français, jusqu'aux millions) ===
+    function numberToFrenchWords(n) {
+      n = Math.floor(Math.abs(n));
+      if (n === 0) return "zéro";
+
+      const units = [
+        "zéro", "un", "deux", "trois", "quatre", "cinq", "six", "sept",
+        "huit", "neuf", "dix", "onze", "douze", "treize", "quatorze",
+        "quinze", "seize"
+      ];
+
+      function twoDigits(x) {
+        if (x < 17) return units[x];
+        if (x < 20) return "dix-" + units[x - 10];
+        if (x < 70) {
+          const tensWords = ["", "", "vingt", "trente", "quarante", "cinquante", "soixante"];
+          const t = Math.floor(x / 10);
+          const u = x % 10;
+          const base = tensWords[t];
+          if (u === 0) return base;
+          if (u === 1 && t > 1) return base + " et un";
+          return base + "-" + units[u];
+        }
+        if (x < 80) {
+          // 70-79 = soixante + 10-19
+          return "soixante-" + twoDigits(x - 60);
+        }
+        // 80-99
+        if (x === 80) return "quatre-vingts";
+        return "quatre-vingt-" + twoDigits(x - 80);
+      }
+
+      function underThousand(x) {
+        if (x < 100) return twoDigits(x);
+        const hundreds = Math.floor(x / 100);
+        const rest = x % 100;
+        let res = "";
+        if (hundreds === 1) {
+          res = "cent";
+        } else {
+          res = units[hundreds] + " cent";
+        }
+        if (rest === 0 && hundreds > 1) {
+          res += "s";
+          return res;
+        }
+        if (rest > 0) {
+          res += " " + twoDigits(rest);
+        }
+        return res;
+      }
+
+      let resultParts = [];
+      if (n >= 1_000_000) {
+        const millions = Math.floor(n / 1_000_000);
+        n = n % 1_000_000;
+        if (millions === 1) {
+          resultParts.push("un million");
+        } else {
+          resultParts.push(underThousand(millions) + " millions");
+        }
+      }
+      if (n >= 1000) {
+        const thousands = Math.floor(n / 1000);
+        n = n % 1000;
+        if (thousands === 1) {
+          resultParts.push("mille");
+        } else {
+          resultParts.push(underThousand(thousands) + " mille");
+        }
+      }
+      if (n > 0) {
+        resultParts.push(underThousand(n));
+      }
+
+      return resultParts.join(" ");
+    }
+
+    function updateAmountInWords(ttcValue) {
+      const intPart = Math.round(ttcValue);
+      const textSpan = document.getElementById("amount-words-text");
+      const numSpan = document.getElementById("amount-words-number");
+      if (!textSpan || !numSpan) return;
+
+      const words = numberToFrenchWords(intPart);
+      const wordsCap = words.charAt(0).toUpperCase() + words.slice(1);
+      textSpan.textContent = wordsCap;
+      numSpan.textContent = new Intl.NumberFormat("fr-FR").format(intPart);
+    }
+
+    // Appliquer les données du formulaire à la facture
+    function applyInvoiceFromForm() {
+      const numero = document.getElementById("input-numero").value.trim() || "01/25";
+      const dateInput = document.getElementById("input-date").value;
+      const client = document.getElementById("input-client").value.trim() || "Client";
+      const designation = document.getElementById("input-designation").value.trim() || "Désignation";
+      const montantTtcInput = document.getElementById("input-montant").value;
+      const tvaRateInput = document.getElementById("input-tva").value;
+
+      let ttc = toNum(montantTtcInput);
+      let tvaRate = toNum(tvaRateInput);
+      if (tvaRate <= 0) tvaRate = 20;
+
+      const spanNumero = document.getElementById("span-numero");
+      const spanDate = document.getElementById("span-date");
+      const spanClient = document.getElementById("span-client");
+      const spanTvaRate = document.getElementById("span-tva-rate");
+
+      const cellDesignation = document.getElementById("cell-designation");
+      const cellTtcLigne = document.getElementById("cell-ttc-ligne");
+      const cellHt = document.getElementById("cell-ht");
+      const cellTva = document.getElementById("cell-tva");
+      const cellTtcTotal = document.getElementById("cell-ttc-total");
+
+      spanNumero.textContent = numero;
+      spanClient.textContent = client;
+      spanTvaRate.textContent = moneyFormatter.format(tvaRate).replace(",00", "");
+
+      // Date : si input vide => date du jour
+      if (dateInput) {
+        const d = new Date(dateInput);
+        spanDate.textContent = d.toLocaleDateString("fr-FR");
+      } else {
+        const today = new Date();
+        spanDate.textContent = today.toLocaleDateString("fr-FR");
+      }
+
+      cellDesignation.textContent = designation;
+
+      if (ttc < 0) ttc = 0;
+      const ht = ttc / (1 + tvaRate / 100);
+      const tva = ttc - ht;
+
+      cellTtcLigne.textContent = moneyFormatter.format(ttc);
+      cellHt.textContent = moneyFormatter.format(ht) + " DHS";
+      cellTva.textContent = moneyFormatter.format(tva) + " DHS";
+      cellTtcTotal.textContent = moneyFormatter.format(ttc) + " DHS";
+
+      updateAmountInWords(ttc);
+    }
+
+    // Date par défaut sur l'input + appliquer les données au chargement
+    (function init() {
+      const dateInput = document.getElementById("input-date");
       const today = new Date();
-      dateSpan.textContent = today.toLocaleDateString("fr-FR");
+      const iso = today.toISOString().slice(0, 10);
+      dateInput.value = iso;
+
+      // Appliquer les valeurs initiales
+      applyInvoiceFromForm();
     })();
 
     // Import du cachet
@@ -676,6 +1024,77 @@
       };
       reader.readAsDataURL(file);
     });
+
+    function onPrintClicked() {
+      applyInvoiceFromForm();
+      window.print();
+    }
+
+    // Génération / téléchargement du PDF avec html2pdf
+    function downloadPdf(callback) {
+      if (typeof html2pdf === "undefined") {
+        alert("La fonctionnalité PDF n'est pas disponible (html2pdf non chargé).");
+        if (callback) callback();
+        return;
+      }
+
+      applyInvoiceFromForm();
+
+      const element = document.getElementById("invoice-content");
+      if (!element) {
+        if (callback) callback();
+        return;
+      }
+
+      const numero = document.getElementById("span-numero").textContent.trim() || "sans-numero";
+      const fileName =
+        "facture-NEW-LACASSA-" +
+        numero.replace(/[^\w\-]/g, "_") +
+        "-" +
+        new Date().toISOString().slice(0, 10) +
+        ".pdf";
+
+      const opt = {
+        margin:       10,
+        filename:     fileName,
+        image:        { type: "jpeg", quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+
+      html2pdf().set(opt).from(element).save().then(function() {
+        if (callback) callback();
+      }).catch(function() {
+        if (callback) callback();
+      });
+    }
+
+    // Bouton WhatsApp : génère le PDF + ouvre WhatsApp avec message pré-rempli
+    function sendWhatsApp() {
+      const numero = document.getElementById("span-numero").textContent.trim();
+      const client = document.getElementById("span-client").textContent.trim();
+      const ttcText = document.getElementById("cell-ttc-total").textContent.trim();
+      const phoneRaw = document.getElementById("input-whatsapp").value.trim();
+
+      const message = [
+        "Bonjour,",
+        "",
+        "Veuillez trouver ci-joint la facture N° " + (numero || "N/A") + " de NEW LACASSA SARL A.U.",
+        "Client : " + (client || "N/A") + ".",
+        "Montant TTC : " + (ttcText || "N/A") + ".",
+        "",
+        "Merci."
+      ].join("\n");
+
+      const target = phoneRaw ? "https://wa.me/" + phoneRaw : "https://wa.me/";
+      const url = target + "?text=" + encodeURIComponent(message);
+
+      // 1) Générer / télécharger le PDF
+      downloadPdf(function() {
+        // 2) Ouvrir WhatsApp (Web / App)
+        window.open(url, "_blank");
+      });
+    }
   </script>
 </body>
 </html>
