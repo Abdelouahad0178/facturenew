@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Facture NEW LACASSA</title>
+
+  <style>
+    /* ===============================
+       RESET SIMPLE
+    =============================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e0f2fe, #eef2ff 40%, #f3f4f6 100%);
+      padding: 24px;
+      color: #111827;
+    }
+
+    /* ===============================
+       CONTENEUR PRINCIPAL (A4)
+    =============================== */
+    .invoice-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .invoice-container {
+      width: 100%;
+      max-width: 900px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 28px 32px 24px;
+      box-shadow:
+        0 20px 25px -5px rgba(15, 23, 42, 0.15),
+        0 8px 10px -6px rgba(15, 23, 42, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Bandeau décoratif */
+    .invoice-container::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .invoice-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===============================
+       HEADER
+    =============================== */
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+    }
+
+    .company-info {
+      max-width: 65%;
+    }
+
+    .company-name {
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .company-badge {
+      display: inline-flex;
+      margin-top: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: rgba(37, 99, 235, 0.08);
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+
+    .company-activity {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #4b5563;
+      line-height: 1.4;
+    }
+
+    .invoice-meta {
+      text-align: right;
+      font-size: 13px;
+      color: #374151;
+    }
+
+    .invoice-meta-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      color: #111827;
+    }
+
+    .invoice-meta-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-bottom: 8px;
+    }
+
+    .invoice-meta-line {
+      margin-top: 4px;
+    }
+
+    .label {
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    /* Bouton imprimer */
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .btn-print {
+      padding: 7px 14px;
+      font-size: 13px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #ffffff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+
+    .btn-print span.icon {
+      font-size: 15px;
+    }
+
+    .btn-print:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 12px 22px rgba(37, 99, 235, 0.45);
+    }
+
+    .btn-print:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+    }
+
+    /* ===============================
+       SECTIONS
+    =============================== */
+    .invoice-section {
+      margin-bottom: 18px;
+      font-size: 14px;
+      color: #111827;
+    }
+
+    .section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #6b7280;
+      margin-bottom: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 18px;
+      height: 1px;
+      background: #cbd5f5;
+    }
+
+    /* Infos client */
+    .client-info {
+      background: linear-gradient(135deg, #f9fafb, #eff6ff);
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 24px;
+      align-items: center;
+    }
+
+    .client-info p {
+      margin: 2px 0;
+      font-size: 13px;
+    }
+
+    /* ===============================
+       TABLEAU FACTURE
+    =============================== */
+    .table-wrapper {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead {
+      background: linear-gradient(135deg, #eff6ff, #e5e7eb);
+    }
+
+    th,
+    td {
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    th {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #4b5563;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    td {
+      border-top: 1px solid #e5e7eb;
+      background-color: #ffffff;
+    }
+
+    tbody tr:nth-child(odd) td {
+      background-color: #f9fafb;
+    }
+
+    .col-designation {
+      width: 65%;
+    }
+    .col-amount {
+      width: 35%;
+    }
+
+    td.amount {
+      text-align: right;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Totaux */
+    .totals-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 14px;
+    }
+
+    .totals-table {
+      width: 280px;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+      border: 1px solid #e5e7eb;
+    }
+
+    .totals-table td {
+      padding: 7px 10px;
+      border-bottom: 1px dashed #e5e7eb;
+    }
+
+    .totals-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .totals-table td.label {
+      text-align: left;
+      font-weight: 500;
+      color: #4b5563;
+    }
+
+    .totals-table td.amount {
+      text-align: right;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .totals-table tr.total-row {
+      background: linear-gradient(135deg, #eef2ff, #e0f2fe);
+    }
+
+    .totals-table tr.total-row td.label {
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .totals-table tr.total-row td.amount {
+      font-weight: 800;
+      color: #1e40af;
+    }
+
+    /* Montant en lettres */
+    .amount-in-words {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f9fafb;
+      border-left: 3px solid #4f46e5;
+      border-top: 1px solid #e5e7eb;
+      font-size: 13px;
+      color: #111827;
+      line-height: 1.5;
+    }
+
+    .amount-in-words strong {
+      font-weight: 600;
+    }
+
+    /* ===============================
+       SIGNATURE / CACHET
+    =============================== */
+    .signature-block {
+      margin-top: 22px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 28px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: #111827;
+    }
+
+    .signature-text {
+      text-align: center;
+      min-width: 200px;
+    }
+
+    .signature-text p {
+      margin-bottom: 4px;
+    }
+
+    .signature-title {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .stamp-preview {
+      width: 140px;
+      height: 140px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: conic-gradient(from 190deg at 50% 50%, #eef2ff, #e0f2fe, #f9fafb, #eef2ff);
+      border: 1px dashed #9ca3af;
+      margin: 0 auto;
+    }
+
+    .stamp-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .stamp-placeholder {
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    .stamp-input {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    .stamp-input label {
+      font-weight: 500;
+    }
+
+    .stamp-input input {
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    /* ===============================
+       FOOTER
+    =============================== */
+    .footer {
+      border-top: 1px solid #e5e7eb;
+      margin-top: 20px;
+      padding-top: 10px;
+      font-size: 11px;
+      color: #4b5563;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .footer-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      align-items: center;
+    }
+
+    .footer strong {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    /* ===============================
+       RESPONSIVE
+    =============================== */
+    @media (max-width: 640px) {
+      body {
+        padding: 12px;
+      }
+
+      .invoice-container {
+        padding: 18px 16px;
+        border-radius: 10px;
+      }
+
+      .invoice-header {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .invoice-meta {
+        text-align: left;
+      }
+
+      .signature-block {
+        justify-content: flex-start;
+      }
+
+      .totals-container {
+        justify-content: flex-start;
+      }
+    }
+
+    /* ===============================
+       IMPRESSION (A4)
+    =============================== */
+    @media print {
+      @page {
+        size: A4;
+        margin: 15mm;
+      }
+
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+
+      .invoice-wrapper {
+        margin: 0;
+      }
+
+      .invoice-container {
+        box-shadow: none;
+        border-radius: 0;
+        border: none;
+      }
+
+      .invoice-container::before {
+        display: none;
+      }
+
+      .actions,
+      .stamp-input {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="invoice-wrapper">
+    <div class="invoice-container">
+      <div class="invoice-inner">
+
+        <!-- Bouton imprimer -->
+        <div class="actions">
+          <button class="btn-print" onclick="window.print()">
+            <span class="icon">🖨️</span>
+            <span>Imprimer la facture</span>
+          </button>
+        </div>
+
+        <!-- EN-TÊTE -->
+        <header class="invoice-header">
+          <div class="company-info">
+            <div class="company-name">NEW LACASSA SARL A. U.</div>
+            <div class="company-badge">Entreprise de construction</div>
+            <p class="company-activity">
+              Activité de construction, location de matériaux de construction.
+            </p>
+          </div>
+
+          <div class="invoice-meta">
+            <div class="invoice-meta-title">Facture</div>
+            <div class="invoice-meta-tag">
+              <span>Original</span>
+            </div>
+            <div class="invoice-meta-line">
+              <span class="label">N° facture :</span> 01/25
+            </div>
+            <div class="invoice-meta-line">
+              <span class="label">Date :</span> <span id="invoice-date"></span>
+            </div>
+          </div>
+        </header>
+
+        <!-- CLIENT -->
+        <section class="invoice-section">
+          <div class="section-title">Client</div>
+          <div class="client-info">
+            <p><span class="label">Nom du client :</span> STRONGER IMMO SARL A.U.</p>
+          </div>
+        </section>
+
+        <!-- DÉTAILS FACTURE -->
+        <section class="invoice-section">
+          <div class="section-title">Détails de la facture</div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-designation">Désignation</th>
+                  <th class="col-amount">Montant TTC (DHS)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>CREUSE DE LA CAVE 60M3 et décharge</td>
+                  <td class="amount">150&nbsp;000,00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Totaux -->
+          <div class="totals-container">
+            <table class="totals-table">
+              <tbody>
+                <tr>
+                  <td class="label">Montant HT</td>
+                  <td class="amount">125&nbsp;000,00 DHS</td>
+                </tr>
+                <tr>
+                  <td class="label">TVA 20&nbsp;%</td>
+                  <td class="amount">25&nbsp;000,00 DHS</td>
+                </tr>
+                <tr class="total-row">
+                  <td class="label">Montant TTC</td>
+                  <td class="amount">150&nbsp;000,00 DHS</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- MONTANT EN LETTRES -->
+        <section class="amount-in-words">
+          <strong>
+            Arrêtée la présente facture à la somme de cent cinquante mille (150&nbsp;000) dirhams TTC.
+          </strong>
+        </section>
+
+        <!-- SIGNATURE / CACHET -->
+        <section class="signature-block">
+          <div class="signature-text">
+            <div class="signature-title">Signé &amp; cachet</div>
+            <p>Pour NEW LACASSA SARL A. U.</p>
+            <p style="margin-bottom: 8px; font-size: 12px; color: #6b7280;">Le représentant légal</p>
+
+            <div class="stamp-preview" id="stamp-preview">
+              <div class="stamp-placeholder">
+                Cachet non importé
+              </div>
+            </div>
+
+            <div class="stamp-input">
+              <label for="stamp-input">Importer le cachet (image) :</label><br />
+              <input type="file" id="stamp-input" accept="image/*" />
+            </div>
+          </div>
+        </section>
+
+        <!-- PIED DE PAGE -->
+        <footer class="footer">
+          <div class="footer-row">
+            <p><strong>Adresse :</strong> LOT ELWAKALA 01 BLOC F S/N LAAYOUNE.</p>
+          </div>
+          <div class="footer-row">
+            <p><strong>RC :</strong> 53543</p>
+            <p><strong>IF :</strong> 66276689</p>
+            <p><strong>N° CSS :</strong> 6070305</p>
+            <p><strong>ICE :</strong> 003712919000008</p>
+          </div>
+        </footer>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Date du jour en français
+    (function setInvoiceDate() {
+      const dateSpan = document.getElementById("invoice-date");
+      const today = new Date();
+      dateSpan.textContent = today.toLocaleDateString("fr-FR");
+    })();
+
+    // Import du cachet
+    const stampInput = document.getElementById("stamp-input");
+    const stampPreview = document.getElementById("stamp-preview");
+
+    stampInput.addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        stampPreview.innerHTML = "";
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        stampPreview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+</body>
+</html>
